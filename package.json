@@ -1,0 +1,11 @@
+{
+    "version": "1.0.0",
+    "name": "si-decorators",
+    "devDependencies": {
+        "@types/knockout": "3.4.53",
+        "typescript": "2.8.3"
+    },
+    "files": [ "artifacts" ],
+    "typings": "artifacts/typings/index.d.ts"
+    
+}
