@@ -1,11 +1,24 @@
 {
-    "version": "1.0.0",
-    "name": "si-decorators",
-    "devDependencies": {
-        "@types/knockout": "3.4.53",
-        "typescript": "2.8.3"
-    },
-    "files": [ "artifacts" ],
-    "typings": "artifacts/typings/index.d.ts"
-    
+  "version": "1.0.5",
+  "name": "si-decorators",
+  "author": "Poul K. Sorensen <pks@s-innovations.net> (http://twitter.com/pksorensen)",
+  "homepage": "https://www.s-innovations.net",
+  "bugs": {
+    "url": "https://github.com/s-innovations/si-appbuilder/issues",
+    "email": "bugs@s-innovations.com"
+  },
+  "devDependencies": {
+    "knockout": "3.5.0",
+    "typescript": "3.4.5",
+    "parcel-bundler": "1.12.3"
+  },
+  "scripts": {
+    "build": "parcel build src/index.ts --out-dir dist",
+    "tsc": "node_modules/.bin/tsc",
+    "prepare": "npm run tsc"
+  },
+  "files": [ "artifacts","src","dist" ],
+  "typings": "artifacts/typings/index.d.ts",
+  "main": "src/index.ts"
+
 }

@@ -36,38 +36,6 @@ export function defaults<T extends Base, TOptions,TArg>(options: Factory<Partial
         // save a reference to the original constructor
         var original = target;
 
-        //// a utility function to generate instances of a class
-        //function construct(constructor: Constructor<T> | Constructor1<T, TOptions>, args: any[]) {
-        //    var c: any = function () {
-        //        return constructor.apply(this, args);
-        //    }
-        //    c.prototype = constructor.prototype;
-        //    return new c();
-           
-        //}
-
-        //// the new constructor behaviour
-        //var f: any = function (...args: any[]) {
-        //    console.log("New: " + original.name);
-
-        //    args[0] = args[0] || {};
-        //    for (let key in options) {
-        //        args[0][key] = isDefined(args[0][key]) ? args[0][key] : options[key]();
-        //    }
-
-        //    let instance = construct(original, args);
-        //    if (setDefaultsOnInstance) {
-        //        setDefaultProperties(instance, args[0], options);
-        //    }
-            
-        //    return instance;
-        //}
-
-        //// copy prototype so intanceof operator still works
-        //f.prototype = original.prototype;
-
-        //// return new constructor (will override original)
-        //return f;
         function test(args: any[]) {
             if (debug)
                 debugger;
@@ -79,9 +47,8 @@ export function defaults<T extends Base, TOptions,TArg>(options: Factory<Partial
         }
 
         return class extends (<ConstructorFunc<Base>>original) {
-            initializeDefaults() {
-
-            }
+            initializeDefaults:()=>void;
+            
             constructor( ...args: any[]) {
                 super(...test(args));
                 if (setDefaultsOnInstance) {

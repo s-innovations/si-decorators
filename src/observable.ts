@@ -2,6 +2,7 @@
 
 import * as ko from "knockout";
 
+
 function isDefined(obj: any) {
     return !(typeof obj === "undefined" || obj === null);
 }
@@ -11,20 +12,20 @@ function isFunc(objOrFunc: any): objOrFunc is Function {
 export const __obsrvs = "__obsrvs";
 export const __obsrvs__init = "__obsrvs_init";
 
-export type DefaultValueType<T, T1> = ((target: T) => KnockoutObservableArray<T1>) | ((target: T) => KnockoutObservable<T1>) | ((target: T) => T1) | KnockoutObservable<T1> | T1;
+export type DefaultValueType<T, T1> = ((target: T) => ko.ObservableArray<T1>) | ((target: T) => ko.Observable<T1>) | ((target: T) => ko.Computed<T1>) | ((target: T) => T1) | ko.Observable<T1> | T1;
 
 export interface ObservableDecoratorOptions<T, T1> {
     logOnChange?: boolean;
     defaultValue?: DefaultValueType<T, T1>,
     readOnly?: boolean;
-    afterInit?: (t: T, o: KnockoutObservable<T1> | KnockoutObservableArray<T1>) => void,
+    afterInit?: (t: T, o: ko.Observable<T1> | ko.ObservableArray<T1> | ko.Computed<T1>) => void,
     beforeSetter?: (v: any) => T1,
     getArrayAsObservable?: boolean;
     refresh?: number;
 }
 
 
-let defaultValueEvaluator = function <T, T1>(target: T, defaultValue?: DefaultValueType<T, T1>): KnockoutObservableArray<T1> | KnockoutObservable<T1> | T1 {
+let defaultValueEvaluator = function <T, T1>(target: T, defaultValue?: DefaultValueType<T, T1>): ko.ObservableArray<T1> | ko.Observable<T1> | T1 | ko.Computed<T1> {
     if (ko.isObservable(defaultValue)) {
         return defaultValue;
     } else {
@@ -38,7 +39,7 @@ let defaultValueEvaluator = function <T, T1>(target: T, defaultValue?: DefaultVa
     }
 }
 
-export function isObservableArray(value: any): value is KnockoutObservableArray<any> {
+export function isObservableArray(value: any): value is ko.ObservableArray<any> {
     return ko.isObservable(value) && ('map' in value || 'push' in value)    // if "map ispresent, observablemappedarrays and fallback to push for normal arrays.
 }
 
@@ -95,7 +96,7 @@ export function createProperty<T, T1>(
         defaultValue
     );
     // property getter                                  
-    var getter = function (): T1 | KnockoutObservableArray<T1> | T1[] {
+    var getter = function (): T1 | ko.ObservableArray<T1> | T1[] {
         
         var observable = initialize(this);
         if (isObservableArray(observable)) {
@@ -121,7 +122,7 @@ export function createProperty<T, T1>(
             this[__obsrvs__init][key] = newVal;
             initialize(this);
         } else {
-            var obs = <KnockoutObservable<T1>>initialize(this);
+            var obs = <ko.Observable<T1>>initialize(this);
             obs(newVal);
         }
     };
@@ -182,7 +183,7 @@ function createInitializer<T, T1>(key: string,
 
         intializeState(instance);
 
-        var _val: KnockoutObservable<T1> | KnockoutObservableArray<T1> = instance[__obsrvs][key];
+        var _val: ko.Observable<T1> | ko.ObservableArray<T1> | ko.Computed<T1> = instance[__obsrvs][key];
 
         if (!_val) {
 
@@ -197,7 +198,7 @@ function createInitializer<T, T1>(key: string,
             _val = instance[__obsrvs][key] = ko.isComputed(defaultValue) || ko.isObservable(defaultValue) ? defaultValue : Array.isArray(defaultValue) ? ko.observableArray(defaultValue) : ko.observable(defaultValue);
 
             if (options.logOnChange) {
-                var _priv = _val();
+                var _priv = _val() as any;
                 _val.subscribe(v => {
                     console.log(`Obsr: '${instance}' ${key}': ${SafeStringify(_priv)} => ${SafeStringify(v)}`);
                     _priv = v;
